@@ -1,0 +1,23 @@
+#!/bin/bash
+# Based on https://www.reddit.com/r/linuxadmin/comments/j6va3c/howto_enable_basic_lldp_in_open_vswitch/
+
+for BR in `ovs-vsctl list-br`
+do
+ovs-vsctl set interface $BR lldp:enable=true
+
+for INT in `ovs-vsctl list-ifaces $BR`
+do
+ovs-vsctl set interface $INT lldp:enable=true
+done
+ovs-vsctl add-aa-mapping $BR 0 0
+
+done
+
+for UUID in `ovs-vsctl list AutoAttach |grep _uuid|sed -e 's/.*: //'`;
+do 
+ovs-vsctl set AutoAttach $UUID system_name=ovs-`hostname`
+ovs-vsctl set AutoAttach $UUID system_description=Open_vSwitch_on_`hostname`
+done
+
+echo "`date +"%F %T"`: LLDP set on this host" > /var/log/lldp-ovs.log
+ovs-vsctl list AutoAttach >> /var/log/lldp-ovs.log
