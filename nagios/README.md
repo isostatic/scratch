@@ -17,7 +17,7 @@ define service{
         normal_check_interval                   1
         retry_check_interval                    1
         check_command                   check_libre_bandwidth
-        notes                           <a href="https://librenms.server/graphs/to=$TIMET$/id=$_SERVICELIBREID$/type=port_bits"><img src="https://librenms.server/graph.php?height=167&width=580&id=$_SERVICELIBREID$&type=port_bits&to=$TIMET$"></a>
+        notes                           <a href="https://librenms.server/graphs/id=$_SERVICELIBREID$/type=port_bits"><img src="https://librenms.server/graph.php?height=167&width=580&id=$_SERVICELIBREID$&type=port_bits"></a>
         contact_groups                          Admins
         notifications_enabled                   0
         register                                0                       
