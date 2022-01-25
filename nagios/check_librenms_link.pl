@@ -15,6 +15,8 @@ my $portid = param("portid") or usage();
 my $warn = param("warn") || "80";
 my $crit = param("critical") || "90";
 
+# Prepend https if protocol not shown
+if ($base !~ /:/) { $base = "https://$base"; }
 # Strip trailing / if provided
 $base =~ s/\/$//;
 
@@ -42,11 +44,16 @@ my $ifSpeed = $ref->{port}[0]->{ifSpeed};
 my $inRate = $ref->{port}[0]->{ifInOctets_rate} * 8;
 my $outRate = $ref->{port}[0]->{ifOutOctets_rate} * 8;
 
-my $percentIn = "n/a";
-my $percentOut = "n/a";
+my $percentIn = "0";
+my $percentOut = "0";
+my $note = "";
 if ($ifSpeed > 0) {
     $percentIn = sprintf("%.2f", 100 * ($inRate / $ifSpeed));
     $percentOut = sprintf("%.2f", 100 * ($outRate / $ifSpeed));
+    if ($ifSpeed >= (1000 * 1000)) { $note = sprintf("%.1f", $ifSpeed/1000/1000)."Mbit"; }
+    if ($ifSpeed >= (1000 * 1000 * 1000)) { $note = sprintf("%.1f", $ifSpeed/1000/1000/1000)."Gbit"; }
+} else {
+    $note = "$ifName IS SHUT";
 }
 
 my $state = "OK";
@@ -60,7 +67,7 @@ if ($percentIn > $crit || $percentOut > $crit) {
     $code = 2;
 }
 
-my $inMB = int($inRate / 100000)/10;
-my $outMB = int($outRate / 100000)/10;
-print "$state: Avg_In= $inMB Mbps and Avg_Out= $outMB Mbps | inUsage=$percentIn%;$crit;$warn; outUsage=$percentOut%;$crit;$warn; inBandwidth=$inMB outBandwidth=$outMB";
+my $inMB = sprintf("%.2f", $inRate / 1000000);
+my $outMB = sprintf("%.2f", $outRate / 1000000);
+print "$state: $note. Avg_In= $inMB Mbps and Avg_Out= $outMB Mbps | inUsage=$percentIn%;$crit;$warn; outUsage=$percentOut%;$crit;$warn; inBandwidth=${inMB}MBs outBandwidth=${outMB}MBs";
 exit $code;
