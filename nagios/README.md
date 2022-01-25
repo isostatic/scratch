@@ -15,10 +15,10 @@ inUsage=14.91%;90;80; outUsage=12.36%;90;80; inBandwidth=149.07MBs outBandwidth=
 ```
 
 Looking like this in Nagios 3.5
-!(nag01.png)
+![nagios screenshot](nag01.png)
 
 And in Nagvis
-!(nag02.png)
+![nagios screenshot](nag02.png)
 
 
 Configure it with the following nagios config
