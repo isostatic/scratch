@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import sys
 import requests
 import json
 import subprocess
@@ -22,12 +23,15 @@ def plotEP(continent, city, gre, hostname):
     rtt = ping_ip(hostname)
     print(f"{city}, {tla}, {gre}, {rtt}")
 
+zsc = "zscaler.net"
+if (len(sys.argv)) > 1:
+    zsc = sys.argv[1]
 
-url = "https://api.config.zscaler.com/zscaler.net/cenr/json"
+url = f"https://api.config.zscaler.com/{zsc}/cenr/json"
 response = requests.get(url)
 if response.status_code == 200:
     data = response.json()
-    data = data['zscaler.net']
+    data = data[zsc]
     for continent, cities in data.items():
         for city, entries in cities.items():
             if isinstance(entries, list):
